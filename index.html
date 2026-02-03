@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Surprise</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+            width: 90%;
+        }
+        
+        h1 {
+            color: #e84393;
+            font-size: 2.8rem;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 15px 40px;
+            font-size: 1.4rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: -1;
+            transition: transform 0.3s ease;
+            transform: scale(0);
+            border-radius: 50px;
+        }
+        
+        .btn:hover::before {
+            transform: scale(1);
+        }
+        
+        #yes-btn {
+            background: linear-gradient(to right, #e84393, #fd79a8);
+            color: white;
+        }
+        
+        #no-btn {
+            background: linear-gradient(to right, #6c5ce7, #a29bfe);
+            color: white;
+            position: relative;
+        }
+        
+        .message {
+            margin-top: 30px;
+            font-size: 1.5rem;
+            color: #e84393;
+            font-weight: bold;
+            min-height: 40px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        
+        .message.show {
+            opacity: 1;
+        }
+        
+        /* Decorative elements */
+        .heart {
+            position: absolute;
+            font-size: 2rem;
+            color: rgba(232, 67, 147, 0.6);
+            animation: float 8s infinite ease-in-out;
+            z-index: 0;
+        }
+        
+        .flower {
+            position: absolute;
+            font-size: 2.5rem;
+            color: rgba(225, 112, 85, 0.7);
+            animation: spin 15s infinite linear;
+            z-index: 0;
+        }
+        
+        .balloon {
+            position: absolute;
+            font-size: 3rem;
+            color: rgba(214, 48, 49, 0.6);
+            animation: floatUp 10s infinite ease-in-out;
+            z-index: 0;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(10deg); }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes floatUp {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-50px) scale(1.1); }
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                padding: 12px 30px;
+                font-size: 1.2rem;
+            }
+            
+            .buttons-container {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Decorative elements -->
+    <div class="heart" style="top: 10%; left: 15%;">❤️</div>
+    <div class="flower" style="top: 20%; right: 20%;">🌹</div>
+    <div class="balloon" style="bottom: 15%; left: 20%;">🎈</div>
+    <div class="heart" style="bottom: 25%; right: 15%;">❤️</div>
+    <div class="flower" style="top: 35%; left: 10%;">🌷</div>
+    <div class="balloon" style="top: 15%; left: 30%;">🎈</div>
+    
+    <div class="container">
+        <h1>Will You Be My Valentine?</h1>
+        <div class="buttons-container">
+            <button id="yes-btn" class="btn">Yes!</button>
+            <button id="no-btn" class="btn">No</button>
+        </div>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const noBtn = document.getElementById('no-btn');
+            const yesBtn = document.getElementById('yes-btn');
+            const message = document.getElementById('message');
+            const container = document.querySelector('.container');
+            
+            // Function to move the "No" button randomly
+            function moveButton() {
+                const containerRect = container.getBoundingClientRect();
+                const buttonRect = noBtn.getBoundingClientRect();
+                
+                // Calculate maximum movement area
+                const maxX = containerRect.width - buttonRect.width;
+                const maxY = containerRect.height - buttonRect.height;
+                
+                // Generate random position within container
+                const randomX = Math.floor(Math.random() * maxX);
+                const randomY = Math.floor(Math.random() * maxY);
+                
+                // Apply new position
+                noBtn.style.position = 'absolute';
+                noBtn.style.left = `${randomX}px`;
+                noBtn.style.top = `${randomY}px`;
+                
+                // Add animation effect
+                noBtn.style.transition = 'left 0.4s ease, top 0.4s ease';
+            }
+            
+            // Move "No" button on hover
+            noBtn.addEventListener('mouseover', moveButton);
+            
+            // Move "No" button on touch devices
+            noBtn.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                moveButton();
+            });
+            
+            // Handle "Yes" button click
+            yesBtn.addEventListener('click', function() {
+                message.textContent = "Yay! You've made my day! 💖 Happy Valentine's Day!";
+                message.classList.add('show');
+                
+                // Add celebration effect
+                container.style.transform = 'scale(1.05)';
+                container.style.transition = 'transform 0.5s ease';
+                
+                setTimeout(() => {
+                    container.style.transform = 'scale(1)';
+                }, 500);
+                
+                // Create floating hearts
+                for (let i = 0; i < 30; i++) {
+                    createHeart();
+                }
+            });
+            
+            // Create floating hearts animation
+            function createHeart() {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.classList.add('heart');
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = '100vh';
+                heart.style.fontSize = (Math.random() * 2 + 1) + 'rem';
+                heart.style.opacity = Math.random() * 0.5 + 0.5;
+                document.body.appendChild(heart);
+                
+                // Animate heart floating up
+                const animationDuration = Math.random() * 5 + 5;
+                heart.style.animation = `floatUp ${animationDuration}s linear forwards`;
+                
+                // Remove heart after animation completes
+                setTimeout(() => {
+                    heart.remove();
+                }, animationDuration * 1000);
+            }
+        });
+    </script>
+</body>
+</html>
